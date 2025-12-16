@@ -17,12 +17,20 @@ def recommend(req: QueryRequest):
         raise HTTPException(status_code=400, detail="Query is empty")
 
     results = search(req.query, top_k=10)
+    print(results)
+
 
     response = []
     for r in results:
         response.append({
-            "assessment_name": r["name"],
-            "assessment_url": r["url"]
+            "name": r.get("name"),
+            "url": r.get("url"),
+            "test_type": r.get("test_type") or "Unknown",
+            "description": r.get("description") or "Not available",
+            "duration": r.get("duration") or "Not specified",
+            "adaptive_support": r.get("adaptive_support") or "Unknown",
+            "remote_support": r.get("remote_support") or "Unknown"
+
         })
 
     return {"recommendations": response}
