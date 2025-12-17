@@ -2,16 +2,24 @@
 
 This project is a Recommendation System for SHL Assessments, in which we have to use the data just by scraping it from the SHL produc catalog page then making its embeddings which will be act as a vector in the vector DB and then using LLM of langchain_google_genai to generate or retriveve the info.
 
+# Response 
+
+First Request maybe slower due to cold start.
+
 ## Features
 - **Scraping**: Automated scraper to fetch assessment data from SHL website by using beautifulsoup.
 - **Data Cleaning**: Normalizes and structures the raw data.
 - **Vector Search**: Uses FAISS and Sentence Transformers for semantic search.
 - **RAG Integration**: Uses Google Gemini (via LangChain) to generate personalized explanations for recommendations.
 - **FastAPI**: High-performance backend API.
-
+- **Deployment**: Render is used for deployment and which automatically  deployes latest code
 
 ## Setup
 
+1. **Clone the repository** (or navigate to the project directory).
+
+2. **Install Dependencies**:
+   pip install -r requirements.txt
 
 3. **Environment Setup**:
    Must use below api key
@@ -23,7 +31,6 @@ Follow these steps to rebuild the data from scratch:
 
 ### 1. Scraping
 Fetch the latest assessment data from SHL.
-
 python scraper/scrape_shl.py
 *Output: `data/catalog.json` (or `raw_catalog.json` depending on script version)*
 
@@ -45,9 +52,17 @@ The API will run at `http://127.0.0.1:8000`
 
 ## Usage
 
-**Endopoint**: `GET /health` // this is for healthcheck
+**Endopoint**: `GET https://shl-rag-assessment-c30j.onrender.com/health` # this is for healthcheck
 
-**Endpoint**: `POST /recommend`
+
+**Response**:
+```json
+{
+  "status": "ok"
+}
+```
+
+**Endpoint**: `POST https://shl-rag-assessment-c30j.onrender.com/recommend` # this is for recommendations
 
 **Request**:
 ```json
