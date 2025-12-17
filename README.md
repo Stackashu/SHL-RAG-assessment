@@ -6,6 +6,11 @@ This project is a Recommendation System for SHL Assessments, in which we have to
 
 First Request maybe slower due to cold start.
 
+## Frontend
+
+Frontend is a simple html page with some css and js.
+[**LINK**](https://shl-rag-assessment-1.onrender.com)
+
 ## Features
 - **Scraping**: Automated scraper to fetch assessment data from SHL website by using beautifulsoup.
 - **Data Cleaning**: Normalizes and structures the raw data.
