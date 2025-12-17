@@ -3,7 +3,7 @@ uvicorn
 requests
 beautifulsoup4
 sentence-transformers
-faiss
+faiss-cpu
 numpy
 python-dotenv
 langchain

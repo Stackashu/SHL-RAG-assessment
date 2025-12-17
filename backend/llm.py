@@ -49,8 +49,9 @@ def generate_response(query: str, context: list[dict]) -> str:
         chain = prompt | llm
         
         result = chain.invoke({"query": query, "context_str": context_str})
+        # print(result) 
         return result.content
         
     except Exception as e:
-        print(f"Error generating response: {e}")
-        return "I encountered an error while analyzing the recommendations."
+        print(f"Error {e}")
+        return "Error occurede with LLM"
