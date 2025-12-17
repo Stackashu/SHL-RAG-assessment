@@ -16,7 +16,7 @@ def recommend(req: QueryRequest):
     if not req.query.strip():
         raise HTTPException(status_code=400, detail="Query is empty")
 
-    results = search(req.query, top_k=10)
+    results = search(req.query, top_k=5)
     
     # Generate natural language response
     from backend.llm import generate_response

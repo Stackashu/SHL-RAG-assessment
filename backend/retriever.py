@@ -60,7 +60,7 @@ def search(query: str, top_k=10):
     q_vec = model.encode([query]).astype("float32")
 
     # Search FAISS
-    D, I = index.search(q_vec, 20)
+    D, I = index.search(q_vec, 8)
     candidates = [metadata[i] for i in I[0]]
 
     wants_soft, wants_tech = detect_query_intent(query)
