@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHL Assessment Recommender</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a; /* Dark background */
+            color: #f8fafc; /* Light text */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #4f46e5; /* Primary color */
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #94a3b8; /* Gray text */
+            font-size: 1.1rem;
+        }
+
+        /* Search Section */
+        .search-container {
+            background: #1e293b; /* Card background */
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 1px solid #334155;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+        }
+
+        input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #334155;
+            background: #0f172a;
+            color: white;
+            font-size: 1.1rem;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4f46e5; /* Primary color */
+            box-shadow: 0 0 5px rgba(79, 70, 229, 0.5);
+        }
+
+        button {
+            padding: 1rem 2rem;
+            background: #4f46e5; /* Primary color */
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #4338ca; /* Primary dark */
+        }
+
+        button:active {
+            background: #4f46e5; /* Primary color */
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Status & Health */
+        .status-bar {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #94a3b8; /* Gray text */
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ef4444; /* red by default */
+        }
+
+        .status-dot.active {
+            background-color: #22c55e; /* green */
+        }
+        
+        .status-dot.loading {
+            background-color: #eab308; /* yellow */
+        }
+
+        /* Results */
+        #results-area {
+            display: none;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* AI Analysis Card */
+        .ai-card {
+            background: rgba(79, 70, 229, 0.1); /* Primary color with transparency */
+            border: 1px solid #4f46e5; /* Primary color */
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-card::before {
+            content: "AI Analysis";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #4f46e5; /* Primary color */
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-bottom-left-radius: 12px;
+            font-weight: 700;
+        }
+
+        .ai-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            white-space: pre-line;
+        }
+
+        /* Recommendations List */
+        .rec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .rec-card {
+            background: #1e293b; /* Card background */
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .rec-card:hover {
+            border-color: #4f46e5; /* Primary color */
+        }
+
+        .rec-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #f8fafc; /* Light text */
+        }
+
+        .rec-type {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ec4899; /* Secondary color */
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .rec-desc {
+            color: #94a3b8; /* Gray text */
+            font-size: 0.95rem;
+            flex-grow: 1;
+            margin-bottom: 1rem;
+        }
+
+        .rec-link {
+            text-decoration: none;
+            color: #4f46e5; /* Primary color */
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rec-link:hover {
+            color: #ec4899; /* Secondary color */
+        }
+
+        .loader {
+            display: none;
+            margin: 2rem auto;
+            border: 4px solid rgba(255,255,255,0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border-left-color: #4f46e5; /* Primary color */
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SHL Assessment AI</h1>
+        <div class="subtitle">AI-Powered Search & Recommendations</div>
+    </header>
+
+    <div class="container">
+        <!-- Search -->
+        <div class="search-container">
+            <form id="searchForm">
+                <div class="search-box">
+                    <input type="text" id="queryInput" placeholder="e.g., I need a Java assessment for senior developers..." required>
+                    <button type="submit" id="searchBtn">
+                        <span>Search</span>
+                    </button>
+                </div>
+            </form>
+            <div class="status-bar">
+                <div id="apiStatusDot" class="status-dot"></div>
+                <span id="apiStatusText">Connecting to server...</span>
+            </div>
+        </div>
+
+        <!-- Loader -->
+        <div class="loader" id="loader"></div>
+
+        <!-- Results -->
+        <div id="results-area">
+            
+            <!-- AI Response -->
+            <div class="ai-card" id="aiCard">
+                <div class="ai-content" id="aiContent">
+                    <!-- AI Text goes here -->
+                </div>
+            </div>
+
+            <h2 style="margin-bottom: 1rem;">Recommended Assessments</h2>
+            
+            <!-- Cards Grid -->
+            <div class="rec-grid" id="recGrid">
+                <!-- Cards injected here -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_BASE = "https://shl-rag-assessment-c30j.onrender.com";
+        const statusDot = document.getElementById('apiStatusDot');
+        const statusText = document.getElementById('apiStatusText');
+        const searchForm = document.getElementById('searchForm');
+        const searchBtn = document.getElementById('searchBtn');
+        const loader = document.getElementById('loader');
+        const resultsArea = document.getElementById('results-area');
+        const aiContent = document.getElementById('aiContent');
+        const recGrid = document.getElementById('recGrid');
+
+        // Health Check
+        async function checkHealth() {
+            statusDot.className = 'status-dot loading';
+            statusText.textContent = "Waking up server (this may take up to 50s)...";
+            
+            try {
+                const res = await fetch(`${API_BASE}/health`);
+                console.log(res);
+                if (res.ok) {
+                    statusDot.className = 'status-dot active';
+                    statusText.textContent = "Server Online";
+                    searchBtn.disabled = false;
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch (e) {
+                statusDot.className = 'status-dot'; // red
+                statusText.textContent = "Server Offline or Unreachable";
+                console.error("Health check failed:", e);
+                // Retry after 5s
+                setTimeout(checkHealth, 5000);
+            }
+        }
+
+        // On Mount
+        window.addEventListener('DOMContentLoaded', () => {
+            searchBtn.disabled = true; // Disable until health OK
+            checkHealth();
+        });
+
+        // Search Handler
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const query = document.getElementById('queryInput').value;
+            if (!query.trim()) return;
+
+            // UI State: Loading
+            searchBtn.disabled = true;
+            searchBtn.textContent = "Thinking...";
+            loader.style.display = 'block';
+            resultsArea.style.display = 'none';
+
+            try {
+                const res = await fetch(`${API_BASE}/recommend`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    displayResults(data);
+                } else {
+                    alert('Error: ' + (data.detail || 'Failed to fetch recommendations'));
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('Network Error: failed to connect to API.');
+            } finally {
+                // UI State: Ready
+                searchBtn.disabled = false;
+                searchBtn.textContent = "Search";
+                loader.style.display = 'none';
+            }
+        });
+
+        function displayResults(data) {
+            // 1. AI Analysis
+            aiContent.textContent = data.ai_analysis || "No AI analysis provided.";
+
+            // 2. Recommendations
+            recGrid.innerHTML = '';
+            if (data.recommendations && data.recommendations.length > 0) {
+                data.recommendations.forEach(rec => {
+                    const card = document.createElement('div');
+                    card.className = 'rec-card';
+                    
+                    const typeLabel = rec.test_type === 'K' ? 'Technical Skill' : 
+                                      rec.test_type === 'P' ? 'Personality/Behavior' : 'Assessment';
+
+                    card.innerHTML = `
+                        <div class="rec-type">${typeLabel}</div>
+                        <div class="rec-title">${rec.name}</div>
+                        <div class="rec-desc">${rec.description.substring(0, 120)}...</div>
+                        <a href="${rec.url}" target="_blank" class="rec-link">
+                            View Details <span>&rarr;</span>
+                        </a>
+                    `;
+                    recGrid.appendChild(card);
+                });
+            } else {
+                recGrid.innerHTML = '<p style="color:var(--text-gray)">No recommendations found.</p>';
+            }
+
+            resultsArea.style.display = 'flex';
+        }
+
+    </script>
+</body>
+</html>
