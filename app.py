@@ -17,8 +17,10 @@ def recommend(req: QueryRequest):
         raise HTTPException(status_code=400, detail="Query is empty")
 
     results = search(req.query, top_k=10)
-    print(results)
-
+    
+    # Generate natural language response
+    from backend.llm import generate_response
+    llm_answer = generate_response(req.query, results)
 
     response = []
     for r in results:
@@ -33,4 +35,4 @@ def recommend(req: QueryRequest):
 
         })
 
-    return {"recommendations": response}
+    return {"recommendations": response, "ai_analysis": llm_answer}

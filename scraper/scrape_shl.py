@@ -31,7 +31,7 @@ def scrape_product(url):
     desc = soup.find("meta", {"name": "description"})
     test_type = soup.find("span", {"class": "product-catalogue__key"})
     adaptive_support = soup.find("span", {"class": "adaptive_support"})
-    duration = soup.find("span", {"class": "duration"})
+    duration = soup.find("p", {"class": "duration"})
     remote_support = soup.find("span", {"class": "remote_support"})
     
     if adaptive_support:
@@ -65,7 +65,7 @@ def main():
         except Exception as e:
             print("Error:", link)
 
-    with open("../data/raw_catalog.json", "a") as f:
+    with open("../data/catalog.json", "a") as f:
         json.dump(results, f, indent=2)
 
 if __name__ == "__main__":
