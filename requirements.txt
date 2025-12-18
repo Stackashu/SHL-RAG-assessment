@@ -2,9 +2,13 @@ fastapi
 uvicorn
 requests
 python-dotenv
+numpy
+
+qdrant-client==1.7.3
+
 langchain
 langchain-google-genai
 langchain-core
-qdrant-client==1.7.3
-numpy
-sentence-transformers
+
+sentence-transformers==2.7.0
+torch==2.1.2+cpu
