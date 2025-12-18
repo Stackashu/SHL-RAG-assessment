@@ -1,12 +1,10 @@
 fastapi
 uvicorn
 requests
-beautifulsoup4
-sentence-transformers
-faiss-cpu
-numpy
 python-dotenv
 langchain
 langchain-google-genai
 langchain-core
-streamlit
+qdrant-client==1.7.3
+numpy
+sentence-transformers

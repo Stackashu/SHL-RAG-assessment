@@ -84,3 +84,7 @@ The API will run at `http://127.0.0.1:8000`
 }
 ```
 
+#FIXED
+
+1. Fixed the of memory full on render.com
+2. using Qdrant for vector DB which stores all the embeddings online 

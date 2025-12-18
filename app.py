@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from backend.retriever import search
+from backend.llm import generate_response
 
 app = FastAPI()
 
@@ -26,22 +27,25 @@ def recommend(req: QueryRequest):
         raise HTTPException(status_code=400, detail="Query is empty")
 
     results = search(req.query, top_k=5)
-    
-    # Generate natural language response
-    from backend.llm import generate_response
-    llm_answer = generate_response(req.query, results)
+
+    # 🔒 LLM should NEVER break API
+    try:
+        llm_answer = generate_response(req.query, results)
+    except Exception as e:
+        print("LLM error:", e)
+        llm_answer = "AI explanation temporarily unavailable."
 
     response = []
     for r in results:
         response.append({
-            "name": r.get("name"),
-            "url": r.get("url"),
-            "test_type": r.get("test_type") or "Unknown",
-            "description": r.get("description") or "Not available",
-            "duration": r.get("duration") or "Not specified",
-            "adaptive_support": r.get("adaptive_support") or "Unknown",
-            "remote_support": r.get("remote_support") or "Unknown"
-
+            "name": r.get("name", ""),
+            "url": r.get("url", ""),
+            "test_type": r.get("test_type", ""),
+            "duration": r.get("duration", ""),
+            "adaptive_support": r.get("adaptive_support", ""),
+            "remote_support": r.get("remote_support", ""),
+            "description": r.get("description", ""),
         })
 
-    return {"recommendations": response, "ai_analysis": llm_answer}
+    return {
+        "recommendations": response  }
